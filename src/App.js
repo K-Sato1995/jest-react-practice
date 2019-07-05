@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HeadLine from "./components/HeadLine";
+import Button from "./components/Button";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         header={"HeadLine"}
         description={"This is the description of the HeadLine"}
       />
+      <Button />
       <Footer />
     </div>
   );
