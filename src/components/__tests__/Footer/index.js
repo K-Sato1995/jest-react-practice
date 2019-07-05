@@ -6,6 +6,8 @@ import Adapter from "enzyme-adapter-react-16";
 
 configure({ adapter: new Adapter() });
 
+// props = {} means that the empty {} would be passed to props if nothing is passed to props.
+
 const setUp = (props = {}) => {
   const component = shallow(<Footer {...props} />);
   return component;
