@@ -11,7 +11,7 @@ const setUp = (props = {}) => {
   return component;
 };
 
-describe("It should render without errors", () => {
+describe("Header Component", () => {
   it("should render without errors", () => {
     const component = setUp();
     const wrapper = component.find(".headerComponent");
