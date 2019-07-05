@@ -1,68 +1,266 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Jest Basic
 
-## Available Scripts
+Jest is a JavaScript unit testing framework built by Facebook.
 
-In the project directory, you can run:
+# Directory Structure
 
-### `npm start`
+```
+- myProgram.js
+- __tests__
+   - myProgram-test.js
+```
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# Basic Syntax
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Each test file looks something like this:
 
-### `npm test`
+```javascript
+const MathModule = require("../myMath"); // 1
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+describe("my math module", () => {
+  // 2
+  it("adds two numbers", () => {
+    // 3
+    // Your testing code goes here
+  });
+});
+```
 
-### `npm run build`
+- `describe` defines a set of tests.
+- `it` defines a single test.
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+You can run the test with `jest` command.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+```
+$ jest
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Assertions
 
-### `npm run eject`
+```javascript
+expect(value).toBe(something);
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Useful matchers
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `toBe`: compare 2 values using `===` operator.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```javascript
+expect(2).toBe(2); // OK
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- `toEqual`: recursively compares two values.
 
-## Learn More
+```javascript
+expect({}).toEqual({}); // OK
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- `toContain`: makes sure the array has the given item.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```javascript
+expect([1, 2, 3]).toContain(1); // OK
+```
 
-### Code Splitting
+- `toThrow`: checks if the given function throws an error.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+```javascript
+expect(() => {
+  undefined();
+}).toThrow(); // OK
+```
 
-### Analyzing the Bundle Size
+- `not`: useful to inverse the expectation.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+```javascript
+expect(2).not.toBe(4); // OK
+```
 
-### Making a Progressive Web App
+You can see other matchers [here](https://jestjs.io/docs/en/api).
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+# Async tests
 
-### Advanced Configuration
+JavaScript relies on callbacks in many cases and Jest supports testing asynchronous code.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+```javascript
+describe('my async module', () => {
+  it('supports promises', () => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    })
+  });
 
-### Deployment
+  it('supports async/await', async () => {
+    await saveUser({...});
+  });
+});
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+# LifeCycle
 
-### `npm run build` fails to minify
+If you need to add some setup/teardown logic, use `beforeEach`/`afterEach` and `beforeAll`/`afterAll`:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+```javascript
+describe("my math module", () => {
+  beforeAll(() => {
+    console.log("This is executed before the test suite");
+  });
+
+  beforeEach(() => {
+    console.log("This is executed before each testcase");
+  });
+
+  it("adds two numbers", () => {
+    expect(() => {
+      undefined();
+    }).toThrow();
+  });
+});
+```
+
+# Create mock functions
+
+`jest.fn` creates a mock function.
+
+```
+const add = jest.fn() //=> returns an empty function
+
+const num = jest.fn(() => 3) //=> returns 3
+```
+
+# Jest commands
+
+## Run one file
+
+```
+$ ./node_modules/.bin/jest --watch
+```
+
+press `p` and put the file.
+
+```
+src/components/__tests__/main/index.js
+```
+
+- [javascript - Run only ONE test with Jest - Stack Overflow](https://stackoverflow.com/questions/44446626/run-only-one-test-with-jest)
+
+## Run all tests
+
+```
+$ ./node_modules/.bin/jest
+```
+
+## Create Coverage Report
+
+```
+$ ./node_modules/.bin/jest --coverage
+```
+
+## Display individual test results
+
+```
+$ ./node_modules/.bin/jest --verbose
+```
+
+# Test with Enzyme
+
+`Enzyme` is a JavaScript Testing utility for React that makes it easier to test your React Components' output.
+
+## Set up
+
+```
+npm install --save-dev enzyme enzyme-adapter-react-16 react-test-renderer
+```
+
+create `src/setupTests.js` file.
+If you don't create this file, you have to define the code below in each test file.
+
+```javascript
+import { configure } from "enzyme";
+import Adapter from "enzyme-adapter-react-16";
+
+configure({ adapter: new Adapter() });
+```
+
+You also have to create `.babelrc` and paste the code below.
+
+```
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": "commonjs"
+      }
+    ],
+    "@babel/preset-react"
+  ]
+}
+```
+
+## Shallow()
+
+if you want to test the `<App />` component, you can extend our `App.test.js` file by adding the following.
+The `shallow()` will test the provided component and ignores any child components that may be present in the component tree thereafter. if we had a `<Header />` and `<Footer />` component within `<App />` for example, they would be ignored in this test.
+
+```
+import React from 'react';
+import { shallow } from 'enzyme';
+import App from './App';
+
+describe('First React component test with Enzyme', () => {
+   it('renders without crashing', () => {
+      shallow(<App />);
+    });
+});
+```
+
+## Find nodes
+
+You can find a class called `headerComponet` from shallow copied `Header` like the code below.
+
+```
+describe("Header Component", () => {
+  it("should render without errors", () => {
+    const component = shallow(<Header />);
+    const wrapper = component.find(".headerComponent");
+
+    expect(wrapper.length).toBe(1);
+  });
+});
+```
+
+## Debug components
+
+You can use `debug()` like the code below.
+
+```
+configure({ adapter: new Adapter() });
+
+describe("It should render without errors", () => {
+  it("should render without errors", () => {
+    const component = shallow(<Header />);
+    const wrapper = component.find(".headerComponent");
+
+    console.log(component.debug());
+  });
+});
+```
+
+The output would be something like this.
+
+```
+<header className="headerComponent">
+     <h1>
+        Header!!
+     </h1>
+</header>
+```
+
+# References
+
+- [jestbasics](http://frantic.im/jestbasics/)
+- [Jest](https://jestjs.io/docs/en/getting-started.html)
+- [Enzyme](https://airbnb.io/enzyme/)
+- [Testing in React with Jest and Enzyme: An Introduction](https://medium.com/@rossbulat/testing-in-react-with-jest-and-enzyme-an-introduction-99ce047dfcf8)
+- [React Unit Testing Using Enzyme and Jest | Toptal](https://www.toptal.com/react/tdd-react-unit-testing-enzyme-jest)
+- [Jest + React Video turtorial](https://www.youtube.com/watch?v=tYMLXpOJtng)
