@@ -1,9 +1,6 @@
 import React from "react";
 
 class HeadLine extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     const { header, description } = this.props;
 
